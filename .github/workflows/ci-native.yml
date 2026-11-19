@@ -26,7 +26,6 @@ jobs:
 
     - name: Fix imports for CI
       run: |
-        # Создаем символические ссылки, чтобы Python видел модули из папки application
         ln -s application/controllers controllers || true
         ln -s application/configs configs || true
         ln -s application/extensions.py extensions.py || true
