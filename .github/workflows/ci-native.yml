@@ -24,6 +24,13 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
+    - name: Fix imports for CI
+      run: |
+        # Создаем символические ссылки, чтобы Python видел модули из папки application
+        ln -s application/controllers controllers || true
+        ln -s application/configs configs || true
+        ln -s application/extensions.py extensions.py || true
+
     - name: Initialize Database
       run: |
         python manage.py db upgrade
