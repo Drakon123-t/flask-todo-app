@@ -26,10 +26,29 @@ jobs:
 
     - name: Initialize Database
       run: |
-        echo "Инициализация БД..."
+        python manage.py db upgrade
+
+    - name: Create app.py wrapper
+      run: |
+        cat << 'EOF' > app.py
+        from flask import Flask
+        from controllers import blueprints
+        from configs import config
+        from extensions import db
+
+        def create_app(config_name=None):
+            if config_name is None:
+                config_name = 'default'
+            app = Flask(__name__)
+            app.config.from_object(config[config_name])
+            db.init_app(app)
+            for bp in blueprints:
+                app.register_blueprint(bp)
+            return app
+        EOF
 
     - name: Smoke test Flask server
       run: |
-          python manage.py runserver > flask.log 2>&1 &
+        python manage.py runserver > flask.log 2>&1 &
         sleep 7
         curl -f http://127.0.0.1:7345/ || (cat flask.log && exit 1)
