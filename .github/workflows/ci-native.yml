@@ -30,6 +30,7 @@ jobs:
 
     - name: Smoke test Flask server
       run: |
-        python manage.py runserver &
-        sleep 5
-        curl -f http://127.0.0.1:7345/ || exit 1
+        touch app.py
+          python manage.py runserver > flask.log 2>&1 &
+        sleep 7
+        curl -f http://127.0.0.1:7345/ || (cat flask.log && exit 1)
